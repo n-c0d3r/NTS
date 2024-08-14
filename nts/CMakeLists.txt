@@ -9,6 +9,7 @@ include(NCPP/ConfigureCompiler)
 #####################################################################################
 #   Options
 #####################################################################################
+set(NTS_FRAME_HEAP_PARAM_COUNT 64 CACHE STRING "the param count of frame heap")
 
 
 
