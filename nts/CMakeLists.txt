@@ -10,6 +10,7 @@ include(NCPP/ConfigureCompiler)
 #   Options
 #####################################################################################
 set(NTS_FRAME_HEAP_PARAM_COUNT 64 CACHE STRING "the param count of frame heap")
+set(NTS_DEFAULT_TASK_BATCH_SIZE 32 CACHE STRING "the default number of task instances can be batched together into a work execution unit")
 
 
 
