@@ -14,10 +14,23 @@ int main()
 
 		au32 s = 0;
 
+		F_task_counter counter2 = 0;
+		task_system_p->schedule(
+			[](F_task_context context, u32 index)
+			{
+			},
+			{
+				.counter_p = &counter2
+			}
+		);
+
 		F_task_counter counter = 0;
 		task_system_p->schedule(
-			[&](F_task_context context, u32 index)
+			[&s, &counter2](F_task_context context, u32 index)
 			{
+				context.yield(
+					F_wait_for_counter(&counter2)
+				);
 				s.fetch_add(1);
 			},
 			{
@@ -29,6 +42,8 @@ int main()
 
 		task_system_p->start();
 		task_system_p->join();
+
+		NCPP_INFO() << s;
 	}
 
 	ncpp::pause_console();

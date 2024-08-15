@@ -59,24 +59,5 @@ namespace nts
             H_worker_thread::current_frame_param()
         );
     }
-    void H_frame_heap::deallocate(void* p, F_frame_param frame_param)
-    {
-        auto& frame_heap = F_frame_heap::instance();
-        auto* worker_thread_raw_p = H_worker_thread::current_worker_thread_raw_p();
-        auto& frame_allocator = worker_thread_raw_p->frame_allocator(
-            frame_param
-        );
-
-        return frame_allocator.deallocate(
-            p
-        );
-    }
-    void H_frame_heap::deallocate(void* p)
-    {
-        return deallocate(
-            p,
-            H_worker_thread::current_frame_param()
-        );
-    }
 
 }

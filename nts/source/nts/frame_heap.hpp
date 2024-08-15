@@ -49,8 +49,35 @@ namespace nts {
     public:
         static void* allocate(sz size, sz alignment, sz alignment_offset, F_frame_param frame_param);
         static void* allocate(sz size, sz alignment, sz alignment_offset);
-        static void deallocate(void* p, F_frame_param frame_param);
-        static void deallocate(void* p);
+
+    public:
+        template<typename F__, typename... F_args__>
+        static F__* T_create_with_frame_param(F_frame_param frame_param, F_args__&&... args)
+        {
+            F__* result_p = (F__*)allocate(
+                sizeof(F__),
+                NCPP_ALIGNOF(F__),
+                0,
+                frame_param
+            );
+            new(result_p) F__(
+                std::forward<F_args__>(args)...
+            );
+            return result_p;
+        }
+        template<typename F__, typename... F_args__>
+        static F__* T_create(F_args__&&... args)
+        {
+            F__* result_p = (F__*)allocate(
+                sizeof(F__),
+                NCPP_ALIGNOF(F__),
+                0
+            );
+            new(result_p) F__(
+                std::forward<F_args__>(args)...
+            );
+            return result_p;
+        }
     };
 
 }
