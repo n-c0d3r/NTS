@@ -4,7 +4,8 @@
 #include <nts/frame_heap.hpp>
 #include <nts/worker_thread.hpp>
 #include <nts/task.hpp>
-#include <nts/coroutine.hpp>
+#include <nts/coroutine_defs.hpp>
+#include <nts/coroutine_pool.hpp>
 
 
 namespace nts {
@@ -19,7 +20,7 @@ namespace nts {
         u8 worker_thread_count = 0;
         TG_fixed_vector<u8, 64, false> non_schedulable_thread_indices = { 0 };
 
-        u32 scheduled_task_ring_buffer_capacity = NTS_DEFAULT_SCHEDULED_TASK_RING_BUFFER_CAPACITY;
+        u32 task_context_ring_buffer_capacity = NTS_DEFAULT_TASK_CONTEXT_RING_BUFFER_CAPACITY;
     };
 
 
@@ -44,6 +45,8 @@ namespace nts {
         ab8 is_started_ = false;
         ab8 is_stopped_ = false;
 
+        TG_array<F_coroutine_pool, u32(E_coroutine_size::COUNT)> coroutine_pools_;
+
     public:
         NCPP_FORCE_INLINE const auto& desc() const noexcept { return desc_; }
         NCPP_FORCE_INLINE const auto& worker_thread_p_vector() const noexcept { return worker_thread_p_vector_; }
@@ -51,6 +54,8 @@ namespace nts {
 
         NCPP_FORCE_INLINE b8 is_started() const noexcept { return is_started_; }
         NCPP_FORCE_INLINE b8 is_stopped() const noexcept { return is_stopped_; }
+
+        NCPP_FORCE_INLINE auto& coroutine_pools() noexcept { return coroutine_pools_; }
 
 
 
@@ -102,18 +107,19 @@ namespace nts {
                 task_p + 1
             );
 
-            *functor_p = NCPP_FORWARD(functor);
-
             new(task_p) F_task(
-                [](F_coroutine& coroutine, u32 instance_index, void* data_p)
+                [](F_task_context context, u32 instance_index, void* data_p)
                 {
                     (*((F_functor*)data_p))(
-                        coroutine,
+                        context,
                         instance_index
                     );
                 },
                 functor_p,
                 desc
+            );
+            new(functor_p) F_functor(
+                NCPP_FORWARD(functor)
             );
 
             //

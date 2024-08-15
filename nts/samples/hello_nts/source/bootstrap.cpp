@@ -12,13 +12,18 @@ int main()
 			}
 		);
 
+		au32 s = 0;
+
 		F_task_counter counter = 0;
 		task_system_p->schedule(
-			[](F_coroutine&, u32)
+			[&](F_task_context context, u32 index)
 			{
+				s.fetch_add(1);
 			},
 			{
-				.counter_p = &counter
+				.counter_p = &counter,
+				.parallel_count = 1000000,
+				.batch_size = 10000
 			}
 		);
 

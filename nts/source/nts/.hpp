@@ -52,14 +52,14 @@ namespace nts { }
 #include <nts/task_system.hpp>
 #include <nts/frame_heap.hpp>
 #include <nts/permanent_frame_param.hpp>
-#include <nts/coroutine.hpp>
 #include <nts/task.hpp>
+#include <nts/task_context.hpp>
 #include <nts/task_functor.hpp>
 #include <nts/task_counter.hpp>
 #include <nts/task_priority.hpp>
 #include <nts/coroutine_pool.hpp>
-#include <nts/coroutine_adapter.hpp>
 #include <nts/coroutine_desc.hpp>
+#include <nts/coroutine_defs.hpp>
 #include <nts/coroutine.hpp>
 
 #pragma endregion

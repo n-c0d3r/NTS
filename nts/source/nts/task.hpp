@@ -32,7 +32,7 @@ namespace nts
         );
 
     public:
-        void execute(F_coroutine& coroutine, u32 begin_instance_index = 0, u32 end_instance_index = 1);
+        void execute(F_task_context context, u32 begin_instance_index = 0, u32 end_instance_index = 1);
     };
 
 }
