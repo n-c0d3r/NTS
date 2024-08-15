@@ -79,10 +79,6 @@ namespace nts {
 
 
 
-    void F_task_system::start()
-    {
-
-    }
     void F_task_system::join()
     {
         if(is_stopped_)
@@ -90,6 +86,19 @@ namespace nts {
 
         is_stopped_ = true;
         destroy_worker_threads_internal();
+    }
+
+
+
+    void F_task_system::schedule_task_internal(
+        F_task* task,
+        F_task_counter* counter_p,
+        F_frame_param frame_param,
+        E_task_priority priority,
+        u32 parallel_count,
+        u32 batch_size
+    )
+    {
     }
 
 }

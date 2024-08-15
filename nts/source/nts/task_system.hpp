@@ -3,12 +3,13 @@
 #include <nts/prerequisites.hpp>
 #include <nts/frame_heap.hpp>
 #include <nts/worker_thread.hpp>
-#include <nts/task_functor.hpp>
+#include <nts/task.hpp>
 
 
 namespace nts {
 
     class F_coroutine;
+    class F_task;
     class F_worker_thread;
 
 
@@ -65,15 +66,28 @@ namespace nts {
 
 
     public:
-        void start();
         void join();
 
 
 
-    public:
-        void schedule(
-            auto&& functor,
+    private:
+        void schedule_task_internal(
+            F_task* task,
+            F_task_counter* counter_p,
             F_frame_param frame_param = 0,
+            E_task_priority priority = E_task_priority::MEDIUM,
+            u32 parallel_count = 1,
+            u32 batch_size = NTS_DEFAULT_TASK_BATCH_SIZE
+        );
+
+
+
+    public:
+        F_task* schedule(
+            auto&& functor,
+            F_task_counter* counter_p,
+            F_frame_param frame_param = 0,
+            E_task_priority priority = E_task_priority::MEDIUM,
             u32 parallel_count = 1,
             u32 batch_size = NTS_DEFAULT_TASK_BATCH_SIZE
         )
@@ -82,19 +96,53 @@ namespace nts {
             NCPP_ASSERT(T_is_task_functor<F_functor>, "invalid functor type");
 
             auto& frame_heap = F_frame_heap::instance();
-
             auto* worker_thread_raw_p = H_worker_thread::current_worker_thread_raw_p();
             auto& frame_allocator = worker_thread_raw_p->frame_allocator(
                 frame_param
             );
 
-            F_functor* allocated_functor_p_ = (F_functor*)(
-                frame_allocator.allocate(
-                    sizeof(F_functor),
-                    NCPP_ALIGNOF(F_functor)
-                )
+            // allocate memory for task pointer and functor
+            sz actual_allocated_size = sizeof(F_task*) + sizeof(F_functor);
+            void* allocated_memory_p_ = frame_allocator.allocate(
+                actual_allocated_size,
+                NCPP_ALIGNOF(F_functor)
             );
-            *allocated_functor_p_ = NCPP_FORWARD(functor);
+
+            // setup task and functor
+            F_task* task_p = (F_task*)allocated_memory_p_;
+            F_functor* functor_p = (F_functor*)(
+                task_p + 1
+            );
+
+            *functor_p = NCPP_FORWARD(functor);
+
+            new(task_p) F_task(
+                [](F_coroutine& coroutine, u32 instance_index, void* data_p)
+                {
+                    (*((F_functor*)data_p))(
+                        coroutine,
+                        instance_index
+                    );
+                },
+                functor_p,
+                counter_p,
+                frame_param,
+                priority,
+                parallel_count
+            );
+
+            //
+            schedule_task_internal(
+                task_p,
+                counter_p,
+                frame_param,
+                priority,
+                parallel_count,
+                batch_size
+            );
+
+            //
+            return task_p;
         }
 
     };

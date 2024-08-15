@@ -11,13 +11,14 @@ int main() {
 		}
 	);
 
+	F_task_counter counter = 0;
 	task_system_p->schedule(
 		[](F_coroutine&, u32)
 		{
-		}
+		},
+		&counter
 	);
 
-	task_system_p->start();
 	task_system_p->join();
 
 	ncpp::pause_console();
