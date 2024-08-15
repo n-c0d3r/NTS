@@ -30,7 +30,7 @@ namespace nts {
 
 
 
-    class F_reference_frame_allocator_config :
+    class NTS_API F_reference_frame_allocator_config :
         public TF_reference_frame_allocator_config<F_frame_heap>
     {
     public:
@@ -41,5 +41,16 @@ namespace nts {
         F_frame_allocator,
         F_reference_frame_allocator_config
     >;
+
+
+
+    class NTS_API H_frame_heap
+    {
+    public:
+        static void* allocate(sz size, sz alignment, sz alignment_offset, F_frame_param frame_param);
+        static void* allocate(sz size, sz alignment, sz alignment_offset);
+        static void deallocate(void* p, F_frame_param frame_param);
+        static void deallocate(void* p);
+    };
 
 }

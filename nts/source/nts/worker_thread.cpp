@@ -13,13 +13,10 @@ namespace nts {
 
 
 
-    F_worker_thread::F_worker_thread(u32 index) :
+    F_worker_thread::F_worker_thread(u32 index, u32 active_index) :
         index_(index),
-        active_index_(
-            F_task_system::instance_p()->desc().run_tasks_on_main_thread
-            ? index
-            : (index - 1)
-        ),
+        active_index_(active_index),
+        is_active_(active_index != NCPP_U32_MAX),
         frame_memory_adapter_p_(F_frame_heap::instance().adapter_p_vector()[index])
     {
         // create frame allocators
@@ -29,15 +26,36 @@ namespace nts {
                 F_frame_allocator(frame_memory_adapter_p_, i)
             );
         }
+
+        //
+        if(index == 0)
+            setup_thread_local_internal();
+
+        //
+        start_internal();
     }
     F_worker_thread::~F_worker_thread()
     {
+        //
+        join_internal();
+
+        //
+        frame_allocators_.clear();
     }
 
 
 
+    void F_worker_thread::start_internal()
+    {
+    }
     void F_worker_thread::join_internal()
     {
+    }
+
+    void F_worker_thread::setup_thread_local_internal()
+    {
+        internal::current_worker_thread_raw_p = this;
+        internal::current_frame_param = frame_param_;
     }
 
 }

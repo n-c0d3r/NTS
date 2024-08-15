@@ -20,6 +20,7 @@ namespace nts
         F_frame_param frame_param_;
         E_task_priority priority_;
         u32 parallel_count_ = 1;
+        u32 batch_size_ = 1;
 
     public:
         NCPP_FORCE_INLINE F_task_functor_caller* functor_caller_p() const noexcept { return functor_caller_p_; }
@@ -28,6 +29,7 @@ namespace nts
         NCPP_FORCE_INLINE F_frame_param frame_param() const noexcept { return frame_param_; }
         NCPP_FORCE_INLINE E_task_priority priority() const noexcept { return priority_; }
         NCPP_FORCE_INLINE u32 parallel_count() const noexcept { return parallel_count_; }
+        NCPP_FORCE_INLINE u32 batch_size() const noexcept { return batch_size_; }
 
 
 
@@ -38,7 +40,8 @@ namespace nts
             F_task_counter* counter_p,
             F_frame_param frame_param,
             E_task_priority priority,
-            u32 parallel_count
+            u32 parallel_count,
+            u32 batch_size
         );
 
     public:

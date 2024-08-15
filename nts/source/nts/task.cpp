@@ -12,14 +12,16 @@ namespace nts
         F_task_counter* counter_p,
         F_frame_param frame_param,
         E_task_priority priority,
-        u32 parallel_count
+        u32 parallel_count,
+        u32 batch_size
     ) :
         functor_caller_p_(functor_caller_p),
         functor_p_(functor_p),
         counter_p_(counter_p),
         frame_param_(frame_param),
         priority_(priority),
-        parallel_count_(parallel_count)
+        parallel_count_(parallel_count),
+        batch_size_(batch_size)
     {
     }
 

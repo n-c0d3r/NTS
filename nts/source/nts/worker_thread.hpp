@@ -25,6 +25,9 @@ namespace nts {
     public:
         friend class F_task_system;
 
+    public:
+        using F_tick_functor = eastl::function<void(TKPA_valid<F_worker_thread>)>;
+
 
 
     private:
@@ -32,6 +35,10 @@ namespace nts {
         u32 active_index_ = 0;
         F_frame_memory_adapter* frame_memory_adapter_p_;
         TG_vector<F_frame_allocator> frame_allocators_;
+        b8 is_active_ = false;
+
+        F_tick_functor tick_functor_;
+        F_frame_param frame_param_ = 0;
 
     public:
         NCPP_FORCE_INLINE u32 index() const noexcept { return index_; }
@@ -42,11 +49,15 @@ namespace nts {
         {
             return frame_allocators_[param];
         }
+        NCPP_FORCE_INLINE b8 is_active() const noexcept { return is_active_; }
+
+        NCPP_FORCE_INLINE const auto& tick_functor() const noexcept { return tick_functor_; }
+        NCPP_FORCE_INLINE F_frame_param frame_param() const noexcept { return frame_param_; }
 
 
 
     public:
-        F_worker_thread(u32 index);
+        F_worker_thread(u32 index, u32 active_index);
         ~F_worker_thread();
 
     public:
@@ -55,7 +66,28 @@ namespace nts {
 
 
     private:
+        void start_internal();
         void join_internal();
+
+    private:
+        void setup_thread_local_internal();
+
+
+
+    public:
+        NCPP_FORCE_INLINE void install_tick(const F_tick_functor& tick_functor)
+        {
+            tick_functor_ = tick_functor;
+        }
+        NCPP_FORCE_INLINE void install_frame_param(F_frame_param frame_param)
+        {
+            frame_param_ = frame_param;
+        }
+        NCPP_FORCE_INLINE void install(const F_tick_functor& tick_functor, F_frame_param frame_param)
+        {
+            install_tick(tick_functor);
+            install_frame_param(frame_param);
+        }
     };
 
 
