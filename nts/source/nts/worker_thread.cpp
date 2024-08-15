@@ -13,10 +13,10 @@ namespace nts {
 
 
 
-    F_worker_thread::F_worker_thread(u32 index, u32 active_index) :
+    F_worker_thread::F_worker_thread(u8 index, u8 schedulable_index) :
         index_(index),
-        active_index_(active_index),
-        is_active_(active_index != NCPP_U32_MAX),
+        schedulable_index_(schedulable_index),
+        is_schedulable_(schedulable_index != NCPP_U32_MAX),
         frame_memory_adapter_p_(F_frame_heap::instance().adapter_p_vector()[index])
     {
         // create frame allocators
@@ -47,8 +47,36 @@ namespace nts {
 
     void F_worker_thread::start_internal()
     {
+        if(is_main())
+            return;
+
+        EA::Thread::ThreadParameters thread_parameters;
+        thread_parameters.mnAffinityMask = 1 << (index_ - 1);
+
+        eathread_ = EA::Thread::MakeThread(
+            [this]()
+            {
+                while(
+                    !(
+                        F_task_system::instance_p()->is_stopped()
+                    )
+                )
+                {
+                    tick_internal();
+                }
+            },
+            thread_parameters
+        );
     }
     void F_worker_thread::join_internal()
+    {
+        if(is_main())
+            return;
+
+        eathread_.WaitForEnd();
+    }
+
+    void F_worker_thread::tick_internal()
     {
     }
 

@@ -11,7 +11,7 @@ include(NCPP/ConfigureCompiler)
 #####################################################################################
 set(NTS_FRAME_HEAP_PARAM_COUNT 64 CACHE STRING "the param count of frame heap")
 set(NTS_DEFAULT_TASK_BATCH_SIZE 32 CACHE STRING "the default number of task instances can be batched together into a work execution unit")
-set(NTS_DEFAULT_CACHED_TASK_RING_BUFFER_CAPACITY 512 CACHE STRING "the default capacity of cached task ring buffer")
+set(NTS_DEFAULT_SCHEDULED_TASK_RING_BUFFER_CAPACITY 4096 CACHE STRING "the default capacity of scheduled task ring buffer")
 
 
 
@@ -33,6 +33,11 @@ file(GLOB_RECURSE source_files
     "source/*.cpp"
     "source/*.hpp"
 )
+
+# Exclude the msvc platform files from the list if not using msvc
+if(NOT MSVC)
+  list(FILTER source_files EXCLUDE REGEX "source/nts/msvc/*.*")
+endif()
 
 # create source group
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/source PREFIX source FILES ${source_files})

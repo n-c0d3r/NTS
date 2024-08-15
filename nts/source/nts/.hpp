@@ -57,6 +57,10 @@ namespace nts { }
 #include <nts/task_functor.hpp>
 #include <nts/task_counter.hpp>
 #include <nts/task_priority.hpp>
+#include <nts/coroutine_pool.hpp>
+#include <nts/coroutine_adapter.hpp>
+#include <nts/coroutine_desc.hpp>
+#include <nts/coroutine.hpp>
 
 #pragma endregion
 

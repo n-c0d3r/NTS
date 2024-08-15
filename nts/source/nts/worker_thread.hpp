@@ -31,33 +31,38 @@ namespace nts {
 
 
     private:
-        u32 index_ = 0;
-        u32 active_index_ = 0;
+        u8 index_ = 0;
+        u8 schedulable_index_ = 0;
         F_frame_memory_adapter* frame_memory_adapter_p_;
         TG_vector<F_frame_allocator> frame_allocators_;
-        b8 is_active_ = false;
+        b8 is_schedulable_ = false;
 
         F_tick_functor tick_functor_;
         F_frame_param frame_param_ = 0;
 
+        EA::Thread::Thread eathread_;
+
     public:
-        NCPP_FORCE_INLINE u32 index() const noexcept { return index_; }
-        NCPP_FORCE_INLINE u32 active_index() const noexcept { return active_index_; }
+        NCPP_FORCE_INLINE u8 index() const noexcept { return index_; }
+        NCPP_FORCE_INLINE b8 is_main() const noexcept { return index_ == 0; }
+        NCPP_FORCE_INLINE u8 schedulable_index() const noexcept { return schedulable_index_; }
         NCPP_FORCE_INLINE auto& frame_memory_adapter() noexcept { return *frame_memory_adapter_p_; }
         NCPP_FORCE_INLINE auto& frame_allocators() noexcept { return frame_allocators_; }
         NCPP_FORCE_INLINE auto& frame_allocator(F_frame_param param) noexcept
         {
             return frame_allocators_[param];
         }
-        NCPP_FORCE_INLINE b8 is_active() const noexcept { return is_active_; }
+        NCPP_FORCE_INLINE b8 is_schedulable() const noexcept { return is_schedulable_; }
 
         NCPP_FORCE_INLINE const auto& tick_functor() const noexcept { return tick_functor_; }
         NCPP_FORCE_INLINE F_frame_param frame_param() const noexcept { return frame_param_; }
 
+        NCPP_FORCE_INLINE auto& eathread() noexcept { return eathread_; }
+
 
 
     public:
-        F_worker_thread(u32 index, u32 active_index);
+        F_worker_thread(u8 index, u8 schedulable_index);
         ~F_worker_thread();
 
     public:
@@ -68,6 +73,9 @@ namespace nts {
     private:
         void start_internal();
         void join_internal();
+
+    private:
+        void tick_internal();
 
     private:
         void setup_thread_local_internal();

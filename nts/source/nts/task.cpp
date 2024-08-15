@@ -9,19 +9,11 @@ namespace nts
     F_task::F_task(
         F_task_functor_caller* functor_caller_p,
         void* functor_p,
-        F_task_counter* counter_p,
-        F_frame_param frame_param,
-        E_task_priority priority,
-        u32 parallel_count,
-        u32 batch_size
+        F_task_desc desc
     ) :
         functor_caller_p_(functor_caller_p),
         functor_p_(functor_p),
-        counter_p_(counter_p),
-        frame_param_(frame_param),
-        priority_(priority),
-        parallel_count_(parallel_count),
-        batch_size_(batch_size)
+        desc_(desc)
     {
     }
 
@@ -33,7 +25,7 @@ namespace nts
         {
             functor_caller_p_(coroutine, instance_index, functor_p_);
         }
-        counter_p_->fetch_sub(end_instance_index - begin_instance_index);
+        desc_.counter_p->fetch_sub(end_instance_index - begin_instance_index);
     }
 
 }

@@ -3,8 +3,7 @@
 #include <nts/prerequisites.hpp>
 
 #include <nts/task_functor.hpp>
-#include <nts/task_counter.hpp>
-#include <nts/task_priority.hpp>
+#include <nts/task_desc.hpp>
 
 
 
@@ -16,20 +15,12 @@ namespace nts
     private:
         F_task_functor_caller* functor_caller_p_;
         void* functor_p_ = 0;
-        F_task_counter* counter_p_ = 0;
-        F_frame_param frame_param_;
-        E_task_priority priority_;
-        u32 parallel_count_ = 1;
-        u32 batch_size_ = 1;
+        F_task_desc desc_;
 
     public:
         NCPP_FORCE_INLINE F_task_functor_caller* functor_caller_p() const noexcept { return functor_caller_p_; }
         NCPP_FORCE_INLINE void* functor_p() const noexcept { return functor_p_; }
-        NCPP_FORCE_INLINE F_task_counter* counter_p() const noexcept { return counter_p_; }
-        NCPP_FORCE_INLINE F_frame_param frame_param() const noexcept { return frame_param_; }
-        NCPP_FORCE_INLINE E_task_priority priority() const noexcept { return priority_; }
-        NCPP_FORCE_INLINE u32 parallel_count() const noexcept { return parallel_count_; }
-        NCPP_FORCE_INLINE u32 batch_size() const noexcept { return batch_size_; }
+        NCPP_FORCE_INLINE const auto& desc() const noexcept { return desc_; }
 
 
 
@@ -37,11 +28,7 @@ namespace nts
         F_task(
             F_task_functor_caller* functor_caller_p,
             void* functor_p,
-            F_task_counter* counter_p,
-            F_frame_param frame_param,
-            E_task_priority priority,
-            u32 parallel_count,
-            u32 batch_size
+            F_task_desc desc
         );
 
     public:

@@ -11,7 +11,11 @@ namespace nts
 
         LOW,
         MEDIUM,
-        HIGH
+        HIGH,
+
+        COUNT,
+
+        DEFAULT = MEDIUM
 
     };
 

@@ -17,14 +17,16 @@ int main()
 			[](F_coroutine&, u32)
 			{
 			},
-			&counter
+			{
+				.counter_p = &counter
+			}
 		);
 
 		task_system_p->start();
 		task_system_p->join();
 	}
 
-	// ncpp::pause_console();
+	ncpp::pause_console();
 
 	return 0;
 }

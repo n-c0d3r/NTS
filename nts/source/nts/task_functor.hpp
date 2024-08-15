@@ -2,12 +2,12 @@
 
 #include <nts/prerequisites.hpp>
 
+#include <nts/coroutine.hpp>
+
 
 
 namespace nts
 {
-    class F_coroutine;
-
     using F_task_functor_caller = void(F_coroutine&, u32 instance_index, void* data_p);
 
     template<typename F__>
