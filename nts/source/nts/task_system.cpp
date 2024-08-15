@@ -129,6 +129,7 @@ namespace nts {
         );
 
         auto* current_worker_thread_raw_p = H_worker_thread::current_worker_thread_raw_p();
+        u32 current_worker_thread_index = current_worker_thread_raw_p->index();
 
         u32 schedulable_worker_thread_count = schedulable_worker_thread_p_vector_.size();
         u32 schedulable_worker_thread_index = current_worker_thread_raw_p->schedulable_index();
@@ -142,7 +143,13 @@ namespace nts {
 
         for(u32 i = 0; i < batch_count; ++i)
         {
+            skip_worker_thread:
+
             schedulable_worker_thread_index = (schedulable_worker_thread_index + 1) % schedulable_worker_thread_count;
+
+            const auto& worker_thread_p = schedulable_worker_thread_p_vector_[schedulable_worker_thread_index];
+            if(worker_thread_p->index() == current_worker_thread_index)
+                goto skip_worker_thread;
 
             // setup coroutine
             F_coroutine* coroutine_p = coroutine_pool.pop();
@@ -163,7 +170,6 @@ namespace nts {
 
             // schedule task context on another worker thread
             F_task_context task_context(coroutine_p);
-            const auto& worker_thread_p = schedulable_worker_thread_p_vector_[schedulable_worker_thread_index];
             worker_thread_p->schedule_task_context(task_context, priority);
         }
     }
