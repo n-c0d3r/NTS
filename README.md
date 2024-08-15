@@ -1,2 +1,2 @@
 # NTS
-NCoder's Learning Aimed C++ Library.
+NCoder's Learning Aimed C++ Task System Library.
