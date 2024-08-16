@@ -41,6 +41,9 @@ int main()
 		);
 
 		task_system_p->start();
+
+		while(counter);
+
 		task_system_p->join();
 
 		NCPP_INFO() << s;

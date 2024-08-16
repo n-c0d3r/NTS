@@ -89,7 +89,7 @@ namespace nts {
                 );
 
                 // main loop
-                while(tick_internal());
+                while(tick());
 
                 //
                 destroy_coroutine_internal();
@@ -105,15 +105,41 @@ namespace nts {
         eathread_.WaitForEnd();
     }
 
-    b8 F_worker_thread::tick_internal()
+    void F_worker_thread::create_coroutine_internal()
     {
+        NCPP_ASSERT(!coroutine_p_);
+        coroutine_p_ = new F_coroutine({
+            .size = E_coroutine_size::UNKNOWN,
+            .type = E_coroutine_type::THREAD
+        });
+    }
+    void F_worker_thread::destroy_coroutine_internal()
+    {
+        NCPP_ASSERT(coroutine_p_);
+        delete coroutine_p_;
+    }
+
+    void F_worker_thread::setup_thread_local_internal()
+    {
+        internal::current_worker_thread_raw_p = this;
+        internal::current_frame_param = frame_param_;
+    }
+
+
+
+    b8 F_worker_thread::tick()
+    {
+        // if this worker thread is not schedulable, just call tick functor
+        if(!is_schedulable_)
+        {
+            tick_functor_(NCPP_KTHIS());
+            return !(F_task_system::instance_p()->is_stopped());
+        }
+
         // if there is some task context ring buffers that are not empty, do not stop
         for(const auto& ring_buffer : task_context_ring_buffers_)
             if(ring_buffer.size())
                 goto has_to_do_works;
-
-        if(F_task_system::instance_p()->is_stopped())
-            return false;
 
         has_to_do_works:
 
@@ -138,14 +164,21 @@ namespace nts {
                 {
                     F_coroutine* coroutine_p = task_context.coroutine_p();
 
+                    F_frame_param prev_frame_param = internal::current_frame_param;
+                    internal::current_frame_param = coroutine_p->frame_param();
+
                     if(coroutine_p->resume(coroutine_p_))
                     {
+                        internal::current_frame_param = prev_frame_param;
+
                         E_coroutine_size coroutine_size = coroutine_p->desc().size;
 
                         coroutine_pools_[u32(coroutine_size)].push(coroutine_p);
                     }
                     else
                     {
+                        internal::current_frame_param = prev_frame_param;
+
                         task_context_ring_buffer.push(task_context);
                     }
                 }
@@ -153,30 +186,8 @@ namespace nts {
             }
         }
 
-        return true;
+        return !(F_task_system::instance_p()->is_stopped());
     }
-
-    void F_worker_thread::create_coroutine_internal()
-    {
-        NCPP_ASSERT(!coroutine_p_);
-        coroutine_p_ = new F_coroutine({
-            .size = E_coroutine_size::UNKNOWN,
-            .type = E_coroutine_type::THREAD
-        });
-    }
-    void F_worker_thread::destroy_coroutine_internal()
-    {
-        NCPP_ASSERT(coroutine_p_);
-        delete coroutine_p_;
-    }
-
-    void F_worker_thread::setup_thread_local_internal()
-    {
-        internal::current_worker_thread_raw_p = this;
-        internal::current_frame_param = frame_param_;
-    }
-
-
 
     void F_worker_thread::schedule_task_context(F_task_context task_context, E_task_priority priority)
     {

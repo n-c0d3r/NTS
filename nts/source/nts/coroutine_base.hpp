@@ -27,12 +27,16 @@ namespace nts
 
         F_task_instance_range task_instance_range_;
 
+        F_frame_param frame_param_;
+
     public:
         NCPP_FORCE_INLINE const auto& desc() const noexcept { return desc_; }
         NCPP_FORCE_INLINE auto resumer_caller_p() const noexcept { return resumer_caller_p_; }
         NCPP_FORCE_INLINE auto resumer_p() const noexcept { return resumer_p_; }
 
         NCPP_FORCE_INLINE const auto& task_instance_range() const noexcept { return task_instance_range_; }
+
+        NCPP_FORCE_INLINE auto frame_param() const noexcept { return frame_param_; }
 
 
 

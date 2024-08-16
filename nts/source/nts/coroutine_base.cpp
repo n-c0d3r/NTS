@@ -2,6 +2,7 @@
 #include <nts/coroutine.hpp>
 #include <nts/worker_thread.hpp>
 
+#include "task.hpp"
 
 
 namespace nts
@@ -47,6 +48,8 @@ namespace nts
     {
         NCPP_ASSERT(!task_instance_range_) << "can't bind new task instance tange if the previous task instance range is not done";
         task_instance_range_ = task_instance_range;
+
+        frame_param_ = task_instance_range_.task_p->desc().frame_param;
     }
     b8 A_coroutine::resume(F_coroutine* from_coroutine_p)
     {

@@ -94,9 +94,6 @@ namespace nts {
         void join_internal();
 
     private:
-        b8 tick_internal();
-
-    private:
         void create_coroutine_internal();
         void destroy_coroutine_internal();
 
@@ -104,6 +101,9 @@ namespace nts {
         void setup_thread_local_internal();
 
 
+
+    public:
+        b8 tick();
 
     public:
         NCPP_FORCE_INLINE void install_tick(const F_tick_functor& tick_functor)
@@ -119,8 +119,6 @@ namespace nts {
             install_tick(tick_functor);
             install_frame_param(frame_param);
         }
-
-
 
     public:
         void schedule_task_context(F_task_context task_context, E_task_priority priority);
