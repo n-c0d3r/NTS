@@ -100,6 +100,11 @@ namespace nts {
     private:
         void setup_thread_local_internal();
 
+#ifdef NCPP_ENABLE_ASSERT
+    private:
+        void check_if_task_system_is_not_started();
+#endif
+
 
 
     public:
@@ -108,10 +113,18 @@ namespace nts {
     public:
         NCPP_FORCE_INLINE void install_tick(const F_tick_functor& tick_functor)
         {
+#ifdef NCPP_ENABLE_ASSERT
+            check_if_task_system_is_not_started();
+#endif
+
             tick_functor_ = tick_functor;
         }
         NCPP_FORCE_INLINE void install_frame_param(F_frame_param frame_param)
         {
+#ifdef NCPP_ENABLE_ASSERT
+            check_if_task_system_is_not_started();
+#endif
+
             frame_param_ = frame_param;
         }
         NCPP_FORCE_INLINE void install(const F_tick_functor& tick_functor, F_frame_param frame_param)

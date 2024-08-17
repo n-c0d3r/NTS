@@ -86,6 +86,7 @@ namespace nts {
                 // wait for the task scheduler started
                 while(
                     !(F_task_system::instance_p()->is_started())
+                    && !(F_task_system::instance_p()->is_stopped())
                 );
 
                 // main loop
@@ -125,6 +126,13 @@ namespace nts {
         internal::current_frame_param = frame_param_;
     }
 
+#ifdef NCPP_ENABLE_ASSERT
+    void F_worker_thread::check_if_task_system_is_not_started()
+    {
+        NCPP_ASSERT(!(F_task_system::instance_p()->is_started()));
+    }
+#endif
+
 
 
     b8 F_worker_thread::tick()
@@ -132,6 +140,7 @@ namespace nts {
         // if this worker thread is not schedulable, just call tick functor
         if(!is_schedulable_)
         {
+            NCPP_ASSERT(tick_functor_) << "tick functor is required for non-schedulable worker thread";
             tick_functor_(NCPP_KTHIS());
             return !(F_task_system::instance_p()->is_stopped());
         }
