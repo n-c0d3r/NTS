@@ -15,7 +15,7 @@ int main()
 		au32 s = 0;
 
 		F_task_counter counter2 = 0;
-		task_system_p->schedule(
+		H_task_system::schedule(
 			[](u32 index)
 			{
 			},
@@ -25,7 +25,7 @@ int main()
 		);
 
 		F_task_counter counter = 0;
-		task_system_p->schedule(
+		H_task_system::schedule(
 			[&s, &counter2](u32 index)
 			{
 				H_task_context::yield(
@@ -35,7 +35,7 @@ int main()
 			},
 			{
 				.counter_p = &counter,
-				.parallel_count = 1000000,
+				.parallel_count = 500000,
 				.batch_size = 10000
 			}
 		);

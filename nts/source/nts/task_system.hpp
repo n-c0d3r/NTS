@@ -140,4 +140,21 @@ namespace nts {
 
     };
 
+
+
+    class H_task_system
+    {
+    public:
+        static NCPP_FORCE_INLINE F_task* schedule(
+            auto&& functor,
+            const F_task_desc& desc
+        )
+        {
+            return F_task_system::instance_p()->schedule(
+                NCPP_FORWARD(functor),
+                desc
+            );
+        }
+    };
+
 }
