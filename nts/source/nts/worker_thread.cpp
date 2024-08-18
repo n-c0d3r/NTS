@@ -10,6 +10,7 @@ namespace nts {
     {
         thread_local F_worker_thread* current_worker_thread_raw_p;
         thread_local F_frame_param current_frame_param;
+        thread_local F_coroutine* current_coroutine_p;
     }
 
 
@@ -124,6 +125,7 @@ namespace nts {
     {
         internal::current_worker_thread_raw_p = this;
         internal::current_frame_param = frame_param_;
+        internal::current_coroutine_p = 0;
     }
 
 #ifdef NCPP_ENABLE_ASSERT
@@ -175,10 +177,12 @@ namespace nts {
 
                     F_frame_param prev_frame_param = internal::current_frame_param;
                     internal::current_frame_param = coroutine_p->frame_param();
+                    internal::current_coroutine_p = coroutine_p;
 
                     if(coroutine_p->resume(coroutine_p_))
                     {
                         internal::current_frame_param = prev_frame_param;
+                        internal::current_coroutine_p = 0;
 
                         E_coroutine_size coroutine_size = coroutine_p->desc().size;
 

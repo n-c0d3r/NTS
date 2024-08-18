@@ -14,7 +14,6 @@ namespace nts
             if(task_instance_range)
             {
                 task_instance_range.task_p->execute(
-                    { coroutine_p },
                     task_instance_range.begin_instance_index,
                     task_instance_range.end_instance_index
                 );

@@ -20,6 +20,7 @@ namespace nts {
     {
         extern thread_local F_worker_thread* current_worker_thread_raw_p;
         extern thread_local F_frame_param current_frame_param;
+        extern thread_local F_coroutine* current_coroutine_p;
     }
 
 
@@ -148,6 +149,7 @@ namespace nts {
             return TK_valid<F_worker_thread>::unsafe(current_worker_thread_raw_p());
         }
         static NCPP_FORCE_INLINE F_frame_param current_frame_param() { return internal::current_frame_param; }
+        static NCPP_FORCE_INLINE F_coroutine* current_coroutine_p() { return internal::current_coroutine_p; }
     };
 
 }

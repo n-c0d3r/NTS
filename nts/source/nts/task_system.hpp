@@ -108,10 +108,9 @@ namespace nts {
             );
 
             new(task_p) F_task(
-                [](F_task_context context, u32 instance_index, void* data_p)
+                [](u32 instance_index, void* data_p)
                 {
                     (*((F_functor*)data_p))(
-                        context,
                         instance_index
                     );
                 },

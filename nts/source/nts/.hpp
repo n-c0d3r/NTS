@@ -54,6 +54,7 @@ namespace nts { }
 #include <nts/permanent_frame_param.hpp>
 #include <nts/task.hpp>
 #include <nts/task_context.hpp>
+#include <nts/task_context_helper.hpp>
 #include <nts/task_functor.hpp>
 #include <nts/task_counter.hpp>
 #include <nts/task_priority.hpp>

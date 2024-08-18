@@ -16,7 +16,7 @@ int main()
 
 		F_task_counter counter2 = 0;
 		task_system_p->schedule(
-			[](F_task_context context, u32 index)
+			[](u32 index)
 			{
 			},
 			{
@@ -26,9 +26,9 @@ int main()
 
 		F_task_counter counter = 0;
 		task_system_p->schedule(
-			[&s, &counter2](F_task_context context, u32 index)
+			[&s, &counter2](u32 index)
 			{
-				context.yield(
+				H_task_context::yield(
 					F_wait_for_counter(&counter2)
 				);
 				s.fetch_add(1);
