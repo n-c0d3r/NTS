@@ -106,6 +106,9 @@ namespace nts {
                 );
             }
         }
+
+        // wait for all worker threads done
+        while (ready_worker_thread_count_.load(eastl::memory_order_acquire) != desc_.worker_thread_count);
     }
     void F_task_system::destroy_worker_threads_internal()
     {

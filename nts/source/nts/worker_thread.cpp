@@ -82,6 +82,9 @@ namespace nts {
                 setup_thread_local_internal();
 
                 //
+                F_task_system::instance_p()->ready_worker_thread_count_.fetch_add(1);
+
+                //
                 create_coroutine_internal();
 
                 // wait for the task scheduler started

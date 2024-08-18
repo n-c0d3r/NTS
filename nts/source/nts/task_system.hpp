@@ -27,6 +27,11 @@ namespace nts {
 
     class NTS_API F_task_system
     {
+    public:
+        friend class F_worker_thread;
+
+
+
     private:
         static TK<F_task_system> instance_p_;
 
@@ -46,6 +51,8 @@ namespace nts {
         ab8 is_stopped_ = false;
 
         TG_array<F_coroutine_pool, u32(E_coroutine_size::COUNT)> coroutine_pools_;
+
+        au8 ready_worker_thread_count_ = 1;
 
     public:
         NCPP_FORCE_INLINE const auto& desc() const noexcept { return desc_; }
