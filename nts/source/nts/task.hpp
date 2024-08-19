@@ -14,11 +14,14 @@ namespace nts
     {
     private:
         F_task_functor_caller* functor_caller_p_;
+        F_task_functor_destructor_caller* functor_destructor_caller_p_;
         void* functor_p_ = 0;
         F_task_desc desc_;
+        au32 local_counter_ = 0;
 
     public:
         NCPP_FORCE_INLINE F_task_functor_caller* functor_caller_p() const noexcept { return functor_caller_p_; }
+        NCPP_FORCE_INLINE F_task_functor_destructor_caller* functor_destructor_caller_p() const noexcept { return functor_destructor_caller_p_; }
         NCPP_FORCE_INLINE void* functor_p() const noexcept { return functor_p_; }
         NCPP_FORCE_INLINE const auto& desc() const noexcept { return desc_; }
 
@@ -27,6 +30,7 @@ namespace nts
     public:
         F_task(
             F_task_functor_caller* functor_caller_p,
+            F_task_functor_destructor_caller* functor_destructor_caller_p,
             void* functor_p,
             F_task_desc desc
         );

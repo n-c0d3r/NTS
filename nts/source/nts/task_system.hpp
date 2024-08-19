@@ -121,6 +121,10 @@ namespace nts {
                         instance_index
                     );
                 },
+                [](void* data_p)
+                {
+                    ((F_functor*)data_p)->~F_functor();
+                },
                 functor_p,
                 desc
             );
