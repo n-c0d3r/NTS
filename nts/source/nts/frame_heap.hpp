@@ -35,6 +35,8 @@ namespace nts {
     {
     public:
         static F_frame_allocator* default_p();
+        static constexpr b8 is_always_default = true;
+        static constexpr b8 is_always_equal = true;
     };
 
     using F_reference_frame_allocator = TF_reference_allocator<
