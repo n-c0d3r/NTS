@@ -46,6 +46,20 @@ namespace nts {
 
 
 
+    class NTS_API F_single_threaded_reference_frame_allocator_config :
+        public TF_reference_frame_allocator_config<F_frame_heap>
+    {
+    public:
+        static F_frame_allocator* default_p();
+    };
+
+    using F_single_threaded_reference_frame_allocator = TF_reference_allocator<
+        F_frame_allocator,
+        F_single_threaded_reference_frame_allocator_config
+    >;
+
+
+
     class NTS_API H_frame_heap
     {
     public:

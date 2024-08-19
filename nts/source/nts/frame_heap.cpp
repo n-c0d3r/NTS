@@ -34,6 +34,15 @@ namespace nts
         );
     }
 
+    F_frame_allocator* F_single_threaded_reference_frame_allocator_config::default_p()
+    {
+        return &(
+            H_worker_thread::current_worker_thread_raw_p()->frame_allocator(
+                H_worker_thread::current_frame_param()
+            )
+        );
+    }
+
 
 
     void* H_frame_heap::allocate(sz size, sz alignment, sz alignment_offset, F_frame_param frame_param)
@@ -59,5 +68,4 @@ namespace nts
             H_worker_thread::current_frame_param()
         );
     }
-
 }
