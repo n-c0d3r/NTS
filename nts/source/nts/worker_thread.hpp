@@ -32,6 +32,7 @@ namespace nts {
 
     public:
         using F_tick_functor = eastl::function<void(TKPA_valid<F_worker_thread>)>;
+        using F_setup_functor = eastl::function<void(TKPA_valid<F_worker_thread>)>;
 
 
 
@@ -43,6 +44,7 @@ namespace nts {
         b8 is_schedulable_ = false;
 
         F_tick_functor tick_functor_;
+        F_setup_functor setup_functor_;
         F_frame_param frame_param_ = 0;
 
         EA::Thread::Thread eathread_;
@@ -69,6 +71,7 @@ namespace nts {
         NCPP_FORCE_INLINE b8 is_schedulable() const noexcept { return is_schedulable_; }
 
         NCPP_FORCE_INLINE const auto& tick_functor() const noexcept { return tick_functor_; }
+        NCPP_FORCE_INLINE const auto& setup_functor() const noexcept { return setup_functor_; }
         NCPP_FORCE_INLINE F_frame_param frame_param() const noexcept { return frame_param_; }
 
         NCPP_FORCE_INLINE auto& eathread() noexcept { return eathread_; }
@@ -112,6 +115,14 @@ namespace nts {
         b8 tick();
 
     public:
+        NCPP_FORCE_INLINE void install_setup(const F_setup_functor& setup_functor)
+        {
+#ifdef NCPP_ENABLE_ASSERT
+            check_if_task_system_is_not_started();
+#endif
+
+            setup_functor_ = setup_functor;
+        }
         NCPP_FORCE_INLINE void install_tick(const F_tick_functor& tick_functor)
         {
 #ifdef NCPP_ENABLE_ASSERT
@@ -127,11 +138,6 @@ namespace nts {
 #endif
 
             frame_param_ = frame_param;
-        }
-        NCPP_FORCE_INLINE void install(const F_tick_functor& tick_functor, F_frame_param frame_param)
-        {
-            install_tick(tick_functor);
-            install_frame_param(frame_param);
         }
 
     public:

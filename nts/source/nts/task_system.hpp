@@ -53,6 +53,7 @@ namespace nts {
         TG_array<F_coroutine_pool, u32(E_coroutine_size::COUNT)> coroutine_pools_;
 
         au8 ready_worker_thread_count_ = 1;
+        au8 setup_worker_thread_count_ = 0;
 
     public:
         NCPP_FORCE_INLINE const auto& desc() const noexcept { return desc_; }

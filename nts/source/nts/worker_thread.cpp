@@ -52,9 +52,6 @@ namespace nts {
         //
         if(index == 0)
             setup_thread_local_internal();
-
-        //
-        start_internal();
     }
     F_worker_thread::~F_worker_thread()
     {
@@ -70,7 +67,9 @@ namespace nts {
     void F_worker_thread::start_internal()
     {
         if(is_main())
+        {
             return;
+        }
 
         EA::Thread::ThreadParameters thread_parameters;
         thread_parameters.mnAffinityMask = u64(1) << u64(index_ - 1);
@@ -78,20 +77,29 @@ namespace nts {
         eathread_ = EA::Thread::MakeThread(
             [this]()
             {
+                auto task_system_p = F_task_system::instance_p();
+
                 //
                 setup_thread_local_internal();
 
                 //
-                F_task_system::instance_p()->ready_worker_thread_count_.fetch_add(1);
+                task_system_p->ready_worker_thread_count_.fetch_add(1);
 
                 //
                 create_coroutine_internal();
 
                 // wait for the task scheduler started
                 while(
-                    !(F_task_system::instance_p()->is_started())
-                    && !(F_task_system::instance_p()->is_stopped())
+                    !(task_system_p->is_started())
+                    && !(task_system_p->is_stopped())
                 );
+
+                if(setup_functor_)
+                    setup_functor_(NCPP_KTHIS());
+
+                //
+                task_system_p->setup_worker_thread_count_.fetch_add(1);
+                while(task_system_p->setup_worker_thread_count_.load(eastl::memory_order_acquire) != task_system_p->desc().worker_thread_count);
 
                 // main loop
                 while(tick());

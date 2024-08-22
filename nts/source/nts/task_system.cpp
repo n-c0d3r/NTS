@@ -107,6 +107,13 @@ namespace nts {
             }
         }
 
+        // start worker threads
+        // use reverse iteration so that the main thread starts last
+        for(auto it = worker_thread_p_vector_.rbegin(); it != worker_thread_p_vector_.rend(); ++it)
+        {
+           (*it)->start_internal();
+        }
+
         // wait for all worker threads done
         while (ready_worker_thread_count_.load(eastl::memory_order_acquire) != desc_.worker_thread_count);
     }
@@ -184,6 +191,17 @@ namespace nts {
         NCPP_ASSERT(!is_started_);
 
         is_started_ = true;
+
+        // setup main worker thread and wait for other worker threads
+        auto& main_worker_thread_p = worker_thread_p_vector_[0];
+
+        if(main_worker_thread_p->setup_functor_)
+            main_worker_thread_p->setup_functor_(
+                NCPP_FOH_VALID(main_worker_thread_p)
+            );
+
+        setup_worker_thread_count_.fetch_add(1);
+        while(setup_worker_thread_count_.load(eastl::memory_order_acquire) != desc_.worker_thread_count);
     }
     void F_task_system::join()
     {
