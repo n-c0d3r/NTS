@@ -44,7 +44,7 @@ namespace nts {
         b8 is_schedulable_ = false;
 
         F_tick_functor tick_functor_;
-        F_setup_functor setup_functor_;
+        TG_vector<F_setup_functor> setup_functors_;
         F_frame_param frame_param_ = 0;
 
         EA::Thread::Thread eathread_;
@@ -71,7 +71,7 @@ namespace nts {
         NCPP_FORCE_INLINE b8 is_schedulable() const noexcept { return is_schedulable_; }
 
         NCPP_FORCE_INLINE const auto& tick_functor() const noexcept { return tick_functor_; }
-        NCPP_FORCE_INLINE const auto& setup_functor() const noexcept { return setup_functor_; }
+        NCPP_FORCE_INLINE const auto& setup_functors() const noexcept { return setup_functors_; }
         NCPP_FORCE_INLINE F_frame_param frame_param() const noexcept { return frame_param_; }
 
         NCPP_FORCE_INLINE auto& eathread() noexcept { return eathread_; }
@@ -120,15 +120,15 @@ namespace nts {
 #ifdef NCPP_ENABLE_ASSERT
             check_if_task_system_is_not_started();
 #endif
-
-            setup_functor_ = setup_functor;
+            setup_functors_.push_back(
+                setup_functor
+            );
         }
         NCPP_FORCE_INLINE void install_tick(const F_tick_functor& tick_functor)
         {
 #ifdef NCPP_ENABLE_ASSERT
             check_if_task_system_is_not_started();
 #endif
-
             tick_functor_ = tick_functor;
         }
         NCPP_FORCE_INLINE void install_frame_param(F_frame_param frame_param)
@@ -136,7 +136,6 @@ namespace nts {
 #ifdef NCPP_ENABLE_ASSERT
             check_if_task_system_is_not_started();
 #endif
-
             frame_param_ = frame_param;
         }
 

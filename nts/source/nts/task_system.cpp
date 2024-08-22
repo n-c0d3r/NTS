@@ -195,10 +195,8 @@ namespace nts {
         // setup main worker thread and wait for other worker threads
         auto& main_worker_thread_p = worker_thread_p_vector_[0];
 
-        if(main_worker_thread_p->setup_functor_)
-            main_worker_thread_p->setup_functor_(
-                NCPP_FOH_VALID(main_worker_thread_p)
-            );
+        for(auto& setup_functor : main_worker_thread_p->setup_functors_)
+            setup_functor(NCPP_FOH_VALID(main_worker_thread_p));
 
         setup_worker_thread_count_.fetch_add(1);
         while(setup_worker_thread_count_.load(eastl::memory_order_acquire) != desc_.worker_thread_count);

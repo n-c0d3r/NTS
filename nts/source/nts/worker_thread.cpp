@@ -94,8 +94,8 @@ namespace nts {
                     && !(task_system_p->is_stopped())
                 );
 
-                if(setup_functor_)
-                    setup_functor_(NCPP_KTHIS());
+                for(auto& setup_functor : setup_functors_)
+                    setup_functor(NCPP_KTHIS());
 
                 //
                 task_system_p->setup_worker_thread_count_.fetch_add(1);
