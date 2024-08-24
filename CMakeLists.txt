@@ -54,7 +54,7 @@ NCPP_VersionHelper_CreateVersionMacros(
     PROJECT_NAME NTS
     OUTPUT_FILE "${NTS_GENERATED_FILES_DIR}/version.hpp"
     MAJOR 0
-    MINOR 0
+    MINOR 3
     PATCH 0
 )
 
