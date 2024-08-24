@@ -18,6 +18,14 @@ int main()
 		H_task_system::schedule(
 			[](u32 index)
 			{
+				NCPP_INFO() << (
+					NTS_AWAIT NTS_ASYNC(
+						[](u32)
+						{
+							return 5;
+						}
+					)
+				);
 			},
 			{
 				.counter_p = &counter2

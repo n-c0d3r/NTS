@@ -64,6 +64,7 @@ namespace nts { }
 #include <nts/coroutine.hpp>
 
 #include <nts/wait_for_counter.hpp>
+#include <nts/async_await.hpp>
 
 #pragma endregion
 
