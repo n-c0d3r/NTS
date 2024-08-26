@@ -50,6 +50,9 @@ namespace nts
         task_instance_range_ = task_instance_range;
 
         frame_param_ = task_instance_range_.task_p->desc().frame_param;
+
+        resumer_caller_p_ = 0;
+        resumer_p_ = 0;
     }
     b8 A_coroutine::resume(F_coroutine* from_coroutine_p)
     {
