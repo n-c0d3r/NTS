@@ -70,5 +70,17 @@ namespace nts
                 F_wait_for_counter(&counter)
             );
         }
+        static NCPP_FORCE_INLINE void yield_or_block(auto&& resumer)
+        {
+            auto* current_worker_thread_raw_p = H_worker_thread::current_worker_thread_raw_p();
+            if(current_worker_thread_raw_p->is_schedulable())
+            {
+                H_task_context::yield(NCPP_FORWARD(resumer));
+            }
+            else
+            {
+                while(!(resumer()));
+            }
+        }
     };
 }
