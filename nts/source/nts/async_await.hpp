@@ -14,6 +14,9 @@ namespace nts
         struct F_await_caller
         {
         };
+        struct F_await_blockable_caller
+        {
+        };
     }
 
 
@@ -200,7 +203,7 @@ namespace nts
 
 
 
-NCPP_FORCE_INLINE auto operator + (const nts::internal::F_await_caller&, const auto& promise)
+NCPP_FORCE_INLINE auto operator << (const nts::internal::F_await_caller&, const auto& promise)
 -> typename std::remove_const_t<std::remove_reference_t<decltype(promise)>>::F_return
 {
     using namespace nts;
@@ -212,12 +215,34 @@ NCPP_FORCE_INLINE auto operator + (const nts::internal::F_await_caller&, const a
 
     return promise.return_value();
 }
-NCPP_FORCE_INLINE void operator + (const nts::internal::F_await_caller&, const nts::TF_promise<void>& promise)
+NCPP_FORCE_INLINE void operator << (const nts::internal::F_await_caller&, const nts::TF_promise<void>& promise)
 {
     using namespace nts;
 
     if(promise.counter())
         H_task_context::yield(
+            F_wait_for_counter(promise.counter_p())
+        );
+}
+
+NCPP_FORCE_INLINE auto operator << (const nts::internal::F_await_blockable_caller&, const auto& promise)
+-> typename std::remove_const_t<std::remove_reference_t<decltype(promise)>>::F_return
+{
+    using namespace nts;
+
+    if(promise.counter())
+        H_task_context::yield_or_block(
+            F_wait_for_counter(promise.counter_p())
+        );
+
+    return promise.return_value();
+}
+NCPP_FORCE_INLINE void operator << (const nts::internal::F_await_blockable_caller&, const nts::TF_promise<void>& promise)
+{
+    using namespace nts;
+
+    if(promise.counter())
+        H_task_context::yield_or_block(
             F_wait_for_counter(promise.counter_p())
         );
 }
@@ -238,4 +263,7 @@ NCPP_FORCE_INLINE auto NTS_ASYNC(auto&& functor, nts::F_task_desc&& desc)
         std::move(desc)
     };
 }
-#define NTS_AWAIT nts::internal::F_await_caller() +
+
+#define NTS_AWAIT nts::internal::F_await_caller() <<
+
+#define NTS_AWAIT_BLOCKABLE nts::internal::F_await_blockable_caller() <<

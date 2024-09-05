@@ -32,44 +32,6 @@ namespace nts
         }
 
     public:
-        static NCPP_FORCE_INLINE void schedule_blocked(
-            auto&& functor,
-            F_task_desc&& desc = {}
-        )
-        {
-            F_task_counter counter = 0;
-
-            desc.counter_p = &counter;
-
-            H_task_system::schedule(
-                NCPP_FORWARD(functor),
-                desc
-            );
-
-            yield(
-                F_wait_for_counter(&counter)
-            );
-        }
-        static NCPP_FORCE_INLINE void schedule_blocked(
-            auto&& functor,
-            const F_task_desc& desc = {}
-        )
-        {
-            F_task_desc parsed_desc = desc;
-
-            F_task_counter counter = 0;
-
-            parsed_desc.counter_p = &counter;
-
-            H_task_system::schedule(
-                NCPP_FORWARD(functor),
-                parsed_desc
-            );
-
-            yield(
-                F_wait_for_counter(&counter)
-            );
-        }
         static NCPP_FORCE_INLINE void yield_or_block(auto&& resumer)
         {
             auto* current_worker_thread_raw_p = H_worker_thread::current_worker_thread_raw_p();
