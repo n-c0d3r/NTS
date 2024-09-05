@@ -231,7 +231,7 @@ NCPP_FORCE_INLINE auto operator << (const nts::internal::F_await_blockable_calle
     using namespace nts;
 
     if(promise.counter())
-        H_task_context::yield_or_block(
+        H_task_context::yield_blockable(
             F_wait_for_counter(promise.counter_p())
         );
 
@@ -242,7 +242,7 @@ NCPP_FORCE_INLINE void operator << (const nts::internal::F_await_blockable_calle
     using namespace nts;
 
     if(promise.counter())
-        H_task_context::yield_or_block(
+        H_task_context::yield_blockable(
             F_wait_for_counter(promise.counter_p())
         );
 }

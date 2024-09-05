@@ -32,7 +32,7 @@ namespace nts
         }
 
     public:
-        static NCPP_FORCE_INLINE void yield_or_block(auto&& resumer)
+        static NCPP_FORCE_INLINE void yield_blockable(auto&& resumer)
         {
             auto* current_worker_thread_raw_p = H_worker_thread::current_worker_thread_raw_p();
             if(current_worker_thread_raw_p->is_schedulable())
