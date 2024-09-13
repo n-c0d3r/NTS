@@ -45,16 +45,17 @@ namespace nts
         NCPP_FORCE_INLINE TF_promise() noexcept = default;
         NCPP_FORCE_INLINE TF_promise(
             auto&& functor,
-            const F_task_desc& desc = {}
+            const F_task_desc& desc
         ) :
             counter_p_(
-                H_frame_heap::T_create<F_task_counter>(0)
+                H_frame_heap::T_create_with_frame_param<F_task_counter>(desc.frame_param, 0)
             ),
             return_value_p_(
                 (F_return*)H_frame_heap::allocate(
                     sizeof(F_return),
                     NCPP_ALIGNOF(F_return),
-                    0
+                    0,
+                    desc.frame_param
                 )
             )
         {
@@ -77,13 +78,14 @@ namespace nts
             F_task_desc&& desc
         ) :
             counter_p_(
-                H_frame_heap::T_create<F_task_counter>(0)
+                H_frame_heap::T_create_with_frame_param<F_task_counter>(desc.frame_param, 0)
             ),
             return_value_p_(
                 (F_return*)H_frame_heap::allocate(
                     sizeof(F_return),
                     NCPP_ALIGNOF(F_return),
-                    0
+                    0,
+                    desc.frame_param
                 )
             )
         {
@@ -146,7 +148,7 @@ namespace nts
         NCPP_FORCE_INLINE TF_promise() noexcept = default;
         NCPP_FORCE_INLINE TF_promise(
             auto&& functor,
-            const F_task_desc& desc = {}
+            const F_task_desc& desc
         ) :
             counter_p_(
                 H_frame_heap::T_create<F_task_counter>(0)
@@ -251,17 +253,17 @@ NCPP_FORCE_INLINE void operator << (const nts::internal::F_await_blockable_calle
 
 NCPP_FORCE_INLINE auto NTS_ASYNC(auto&& functor, const nts::F_task_desc& desc = {})
 {
-    return nts::TF_promise<decltype(functor(ncpp::u32(0)))> {
+    return nts::TF_promise<decltype(functor(ncpp::u32(0)))>(
         NCPP_FORWARD(functor),
         desc
-    };
+    );
 }
 NCPP_FORCE_INLINE auto NTS_ASYNC(auto&& functor, nts::F_task_desc&& desc)
 {
-    return nts::TF_promise<decltype(functor(ncpp::u32(0)))> {
+    return nts::TF_promise<decltype(functor(ncpp::u32(0)))>(
         NCPP_FORWARD(functor),
         std::move(desc)
-    };
+    );
 }
 
 #define NTS_AWAIT nts::internal::F_await_caller() <<
